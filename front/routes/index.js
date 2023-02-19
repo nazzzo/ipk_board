@@ -25,7 +25,7 @@ router.get("/", async (req, res) => {
     //     return
     // }
     // if (req.user === undefined) return res.render("index.html", { list });
-    console.log(req.user);
+    // console.log(req.user);
     res.render("index.html", { user: req.user, list });
 });
 
@@ -63,9 +63,9 @@ router.use("/admin", admin);
 
 // 카카오 API 로그인
 KKO_HOST = `https://kauth.kakao.com`;
-REST_API_KEY = `e6dfa1b635337a7d85d3ef92c885670c`;
+REST_API_KEY = `1fe7ae4bf45bdf9bd6fc758bd63e9e0f`;
 REDIRECT_URI = `http://localhost:3000/auths/kakao`;
-CLIENT_SERCRET = `liSNdnbPh4yEOm9ZqSuocwothsK1tbKa`;
+CLIENT_SERCRET = `1NLiTnJ7OOm09XyI4PrGAgIPwKispRor`;
 
 router.get("/kakao/login", (req, res) => {
     const redirectURI = `${KKO_HOST}/oauth/authorize?client_id=${REST_API_KEY}&redirect_uri=${REDIRECT_URI}&response_type=code`;

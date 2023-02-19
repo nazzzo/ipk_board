@@ -279,7 +279,7 @@ sideComponent.addEventListener("click", (e) => {
 
 const scrollHandler = () => {
     if (window.pageYOffset < comments.offsetTop - window.innerHeight * 0.3) {
-        sideComponent.style.top = `${window.pageYOffset + window.innerHeight * 0.3}px`;
+        sideComponent.style.top = `${window.pageYOffset + window.innerHeight * 0.2}px`;
         likes.style.top = `${window.pageYOffset + window.innerHeight * 0.3}px`;
     }
 };

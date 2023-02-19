@@ -590,9 +590,9 @@
 }
 
 #sideComponent {
-    right: 0;
+    right: -240px;
     position: fixed;
-    top: 15%;
+    top: 10%;
     width: 240px;
     overflow: hidden;
 }

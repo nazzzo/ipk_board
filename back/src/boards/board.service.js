@@ -111,6 +111,7 @@ class BoardService {
             if (!userid || !subject || !content) throw "내용이 없습니다";
             const regex = /https?:\/\/[^\s]*?\.(?:png|jpe?g|gif)/g;
             const match = regex.exec(content);
+
             let imgs = null;
             if (match) {
                 imgs = match;
@@ -129,7 +130,9 @@ class BoardService {
                 introduce,
                 image: imgs[0],
             };
+
             if (!imgs[0]) delete boarddata.image;
+
             const write = await this.boardRepository.createBoard(boarddata);
             return write;
         } catch (e) {

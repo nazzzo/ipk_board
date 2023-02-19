@@ -23,6 +23,7 @@ const authService = new AuthService({ authRepository, jwt, config })
 const authController = new AuthController({ authService })
 const kakao = new Kakao({axios, qs, jwt, User})
 
+
 module.exports = {
     authController,
     kakao

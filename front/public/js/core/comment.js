@@ -47,6 +47,7 @@ class Comment extends Component {
 
         const list = this.state?.list;
         if (list === undefined) return "로딩중";
+        console.log(list);
         const parent = this.target.parentNode;
         const count = this.state.data.commentCount;
         const userid = document.querySelector("#userid").value;

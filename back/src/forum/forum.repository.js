@@ -8,7 +8,7 @@ class forumRepository {
     async getnotice({ userid, level }) {
         try {
             let andquery = userid ? `AND Comment.userid = "${userid}"` : "";
-            const list = await this.Board.findAll({ raw: true, where: { category: "notice" } });
+            const list = await this.Board.findAll({ raw: true, where: { category: "notice" }, order: [["id", "desc"]] });
             const qnaBoard = await this.Board.findOne({ raw: true, where: { category: "QnA" } });
             const idx = qnaBoard.id;
             const [comment] = await this.sequelize.query(`
@@ -27,7 +27,7 @@ FROM comments
 JOIN User AS B
 ON comments.userid = B.userid
 WHERE comments.boardid = ${idx}
-ORDER BY PATH DESC;`);
+ORDER BY SUBSTRING_INDEX(PATH, '-', 1)*1, SUBSTRING_INDEX(PATH, '-', -1)*1;`);
 
             const board = await this.Board.findAll({ raw: true });
             return [list, comment];

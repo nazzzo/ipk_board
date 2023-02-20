@@ -47,11 +47,12 @@ class Comment extends Component {
 
         const list = this.state?.list;
         if (list === undefined) return "로딩중";
+        console.log(list);
         const parent = this.target.parentNode;
         const count = this.state.data.commentCount;
         const userid = document.querySelector("#userid").value;
         const userlevel = document.querySelector("#userlevel").value;
-        const url = "http://localhost:3005/board/";
+        const url = "http://3.39.10.104/board/";
         let recomment = `<button id="commentRecomment" class="commentBtn"><iconify-icon icon="mdi:comment-plus"></iconify-icon><span id="addComment">답글</span></button>`;
         const data = `
             <div id="total">

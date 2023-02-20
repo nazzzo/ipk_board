@@ -12,7 +12,7 @@ class BoardRepository {
         this.PointUp = PointUp;
     }
 
-    async findAll({ searchType, search, sort, category, limit, pagingsort, pagingcategory }) {
+    async findAll({ searchType, search, sort, category, limit, pagingsort, pagingcategory, notice }) {
         try {
             const check = (post, query) => {
                 if (!post && query) {
@@ -24,8 +24,7 @@ class BoardRepository {
 
             let sortvalue = check(sort, pagingsort);
             let categoryvalue = check(category, pagingcategory);
-            console.log("catecatecate", categoryvalue);
-            console.log("sortsort", sortvalue);
+            let noti = !notice ? "notice" : " ";
             let where;
             if ((searchType === "A.subject") | (searchType === "A.content")) {
                 where = `AND ${searchType} LIKE '%${search}%'`;
@@ -58,7 +57,7 @@ class BoardRepository {
         ON A.userid = B.userid
         LEFT JOIN Hashtag AS C
         ON A.id = C.boardid
-        WHERE A.category not in("notice", "QnA")
+        WHERE A.category not in("${noti}", "QnA")
         ${where}${categoryKey}
         GROUP BY A.id
         ${sortKey}
@@ -105,7 +104,8 @@ class BoardRepository {
     }
     async findOne(id, idx) {
         try {
-            const [view] = await this.findAll({ searchType: "A.id", search: idx });
+            const [view] = await this.findAll({ searchType: "A.id", search: idx, notice: 1 });
+            console.log("view :::", view);
             // const comment = await this.Comment.findAll({
             //     raw: true,
             //     where: { boardid: idx },
@@ -113,28 +113,30 @@ class BoardRepository {
             // console.log("view", view);
             const [comment] = await this.sequelize.query(`
             WITH RECURSIVE comments (id, content, depth, parentid, createdAt, updatedAt, boardid, userid, PATH) AS (
-SELECT id, content, depth, parentid, createdAt, updatedAt, boardid, userid, CAST(id AS CHAR(100))
-FROM Comment
-WHERE parentid = 0
-UNION ALL
-SELECT t.id, t.content, comments.depth + 1, t.parentid, t.createdAt, t.updatedAt, t.boardid, t.userid, concat(comments.PATH, '-', t.id)
-FROM comments
-JOIN Comment t ON comments.id = t.parentid
+SELECT id, content, depth, parentid, createdAt, updatedAt, boardid, userid, CAST(id as CHAR(100))
+  FROM Comment
+  WHERE parentid = 0
+  UNION ALL
+  SELECT t.id, t.content, comments.depth + 1, t.parentid, t.createdAt, t.updatedAt, t.boardid, t.userid, CONCAT(comments.PATH, '-', t.id)
+  FROM comments
+  JOIN Comment t ON comments.id = t.parentid
 )
 SELECT comments.*, B.userimg
 FROM comments
 JOIN User AS B
 ON comments.userid = B.userid
 WHERE comments.boardid = ${idx}
-ORDER BY PATH;`);
+ORDER BY SUBSTRING_INDEX(PATH, '-', 1)*1, SUBSTRING_INDEX(PATH, '-', -1)*1;`);
             // const hashtag = await this.Hashtag.findAll({
             //     attributes: ["tagname"],
             //     raw: true,
             //     where: { boardid: idx },
             // });
+
             const prevPost = await this.findPrevOne(id, idx);
             const nextPost = await this.findNextOne(id, idx);
             // console.log(`repo::::`, prevPost, nextPost);
+            console.log("comment", [view, prevPost, nextPost, comment]);
             return [view, prevPost, nextPost, comment];
         } catch (e) {
             throw new Error(e);
@@ -145,15 +147,15 @@ ORDER BY PATH;`);
           SELECT subject, userid, id FROM Board WHERE userid ='${id}' and id < ${idx} ORDER BY id DESC LIMIT 1
           `);
         if (!prevPost) return null;
-        return prevPost
-      }
-      async findNextOne(id, idx) {
+        return prevPost;
+    }
+    async findNextOne(id, idx) {
         const [[nextPost]] = await this.sequelize.query(`
           SELECT subject, userid, id FROM Board WHERE userid ='${id}' and id > ${idx} ORDER BY id ASC LIMIT 1
         `);
         if (!nextPost) return null;
-        return nextPost
-      }
+        return nextPost;
+    }
     async createBoard(boarddata) {
         try {
             const { userid, subject, content, hashtag, category, introduce, image } = boarddata;
@@ -380,7 +382,6 @@ ORDER BY PATH;`);
             throw new Error(e);
         }
     }
-
 }
 
 module.exports = BoardRepository;

@@ -155,7 +155,6 @@ ORDER BY PATH;`);
         return nextPost
       }
     async createBoard(boarddata) {
-        console.log(`boarddata::::`, boarddata);
         try {
             const { userid, subject, content, hashtag, category, introduce, image } = boarddata;
             const createBoard = await this.Board.create(boarddata, { plain: true });

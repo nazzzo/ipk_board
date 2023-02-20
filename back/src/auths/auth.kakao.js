@@ -6,9 +6,9 @@ class Kakao {
         this.User = User
         this.jwt = jwt
         this.KKO_HOST = `https://kauth.kakao.com`
-        this.REST_API_KEY = `e6dfa1b635337a7d85d3ef92c885670c`
+        this.REST_API_KEY = `1fe7ae4bf45bdf9bd6fc758bd63e9e0f`
         this.REDIRECT_URI = `http://${host}:${port}/auths/kakao`
-        this.CLIENT_SERCRET = `liSNdnbPh4yEOm9ZqSuocwothsK1tbKa`
+        this.CLIENT_SERCRET = `1NLiTnJ7OOm09XyI4PrGAgIPwKispRor`
     }
 
 
@@ -24,7 +24,6 @@ class Kakao {
             code,
             client_secret: this.CLIENT_SERCRET,
         })
-
         const {data} = await this.axios.post(host, body, headers)
         return data
     }

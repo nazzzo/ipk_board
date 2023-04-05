@@ -13,6 +13,7 @@ class Kakao {
 
 
     async getToken(code){
+        console.log(`code:::`, code)
         const headers = {
             "Content-type" : "application/x-www-form-urlencoded;charset=utf-8"
         }
@@ -60,6 +61,7 @@ class Kakao {
     }
 
     async login(req, res, next) {
+        console.log(req.query)
         try {
             const {code} = req.query
             const {access_token} = await this.getToken(code)
@@ -73,7 +75,7 @@ class Kakao {
 
 
             const user = await this.kakaoSignup({data})
-            console.log(user)
+            console.log(`user::::`, user)
             res.cookie("token",this.jwt.createToken(user),{maxAge:600000})
             res.redirect(`http://${redirect_host}:${redirect_port}`)
             
